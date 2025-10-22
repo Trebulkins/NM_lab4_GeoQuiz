@@ -1,15 +1,17 @@
 package com.example.nm_lab4_geoquiz
 
 import android.os.Bundle
-import android.util.MutableInt
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -17,10 +19,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.nm_lab4_geoquiz.ui.theme.NM_lab4_GeoQuizTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,12 +39,7 @@ class MainActivity : ComponentActivity() {
             NM_lab4_GeoQuizTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(Modifier.padding(innerPadding)) {
-                        Text(
-                            text="Вырос вопрос",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                        AnswerMe(modifier = Modifier.fillMaxWidth(), num = num.value, result = result)
+                        AnswerMe(modifier = Modifier.fillMaxWidth(), num = num, result = result)
                     }
                 }
             }
@@ -52,36 +53,72 @@ val questions = listOf<String>(
     "Суэцкий канал соединяет Красное море и Индийский океан",
     "Река Нил исходит из Египта",
     "Река Амазонка - самая длинная река в Америке",
-    "Озеро Байкал - старейшее и самое глубокое из пресноводных озер"
+    "Озеро Байкал - старейшее и самое глубокое из пресноводных озер",
+    ""
 )
 val answers = listOf<Boolean>(true, true, false, false, true, true)
-fun answerfun(ans: Boolean, num: Int, result: MutableIntState) {
-    if (ans == answers[num]) {
+fun answerfun(ans: Boolean, num: MutableIntState, result: MutableIntState) {
+    if (ans == answers[num.value]) {
         result.intValue += 1
     }
 }
 
 @Composable
-fun AnswerMe(modifier: Modifier, num: Int, result: MutableIntState) {
+fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) {
+    val isnext = remember{ mutableStateOf(false) }
+    val isend = false
     Column(modifier) {
-        Text(
-            text = questions[num],
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button({ answerfun(true, num, result) }) {
-                Text(text = "Правда")
-            }
-            Button({ answerfun(false, num, result) }) {
-                Text(text = "Ложь")
+        Spacer(Modifier.height(10.dp))
+        AnimatedVisibility(visible = num.value >= 6) {
+            Text(
+                text = "Реузльтат: ${result.value} / 6",
+                modifier = modifier,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp
+            )
+        }
+        AnimatedVisibility(visible = num.value < 6) {
+            Text(
+                text = questions[num.value],
+                modifier = modifier,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        AnimatedVisibility(visible = !isnext.value) {
+            Row(
+                modifier = modifier,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button({ answerfun(true, num, result); isnext.value = true }) {
+                    Text(text = "Правда")
+                }
+                Button({ answerfun(false, num, result); isnext.value = true }) {
+                    Text(text = "Ложь")
+                }
             }
         }
-        Button({ answerfun(true, num, result) }) {
-            Text(text = "Правда")
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            AnimatedVisibility(visible = isnext.value) {
+                Button({ num.value += 1; isnext.value = false }, Modifier.fillMaxWidth(0.5f)) {
+                    Text(text = "Далее")
+                }
+            }
+        }
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            AnimatedVisibility(visible = num.value >= 6) {
+                Button({ num.value = 0; isnext.value = false }, Modifier.fillMaxWidth(0.5f)) {
+                    Text(text = "Заново")
+                }
+            }
         }
     }
 }
@@ -90,6 +127,6 @@ fun AnswerMe(modifier: Modifier, num: Int, result: MutableIntState) {
 @Composable
 fun GreetingPreview() {
     NM_lab4_GeoQuizTheme {
-        AnswerMe(modifier = Modifier.fillMaxSize(), num = 0, result = mutableIntStateOf(0))
+        AnswerMe(modifier = Modifier.fillMaxSize(), num = remember{mutableIntStateOf(0)}, result = remember{mutableIntStateOf(0)})
     }
 }
