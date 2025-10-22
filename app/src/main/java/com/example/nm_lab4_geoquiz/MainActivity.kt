@@ -72,7 +72,7 @@ fun answerfun(ans: Boolean, num: MutableIntState, result: MutableIntState) {
 @Composable
 fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) {
     val isnext = rememberSaveable{ mutableStateOf(false) }
-    AnimatedVisibility(visible = num.value >= 6) {
+    if (num.value >= 6) {
         Text(
             text = "Реузльтат: ${result.value} / 6",
             modifier = modifier,
@@ -81,7 +81,7 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
             fontSize = 28.sp
         )
     }
-    AnimatedVisibility(visible = num.value < 6) {
+    if (num.value < 6) {
         Text(
             text = questions[num.value],
             modifier = modifier,
@@ -90,7 +90,7 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
         )
     }
     Spacer(Modifier.height(20.dp))
-    AnimatedVisibility(visible = !isnext.value && num.value < 6) {
+    if (!isnext.value && num.value < 6) {
         Row(
             modifier = modifier,
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -107,7 +107,7 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        AnimatedVisibility(visible = isnext.value) {
+        if (isnext.value) {
             Button({ num.value += 1; isnext.value = false }, Modifier.fillMaxWidth(0.5f)) {
                 Text(text = "Далее")
             }
@@ -117,7 +117,7 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        AnimatedVisibility(visible = num.value >= 6) {
+        if (num.value >= 6) {
             Button({ num.value = 0; isnext.value = false; result.value = 0 }, Modifier.fillMaxWidth(0.5f)) {
                 Text(text = "Заново")
             }
