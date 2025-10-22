@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,18 +52,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-val questions = listOf<String>(
+val questions = listOf(
     "Канберра - столица Австралии",
     "Тихий океан больше Атлантического океана",
     "Суэцкий канал соединяет Красное море и Индийский океан",
     "Река Нил исходит из Египта",
     "Река Амазонка - самая длинная река в Америке",
-    "Озеро Байкал - старейшее и самое глубокое из пресноводных озер",
-    ""
+    "Озеро Байкал - старейшее и самое глубокое из пресноводных озер"
 )
-val answers = listOf<Boolean>(true, true, false, false, true, true)
+val answers = listOf(true, true, false, false, true, true)
 fun answerfun(ans: Boolean, num: MutableIntState, result: MutableIntState) {
-    if (ans == answers[num.value]) {
+    if (ans == answers[num.intValue]) {
         result.intValue += 1
     }
 }
@@ -72,25 +70,25 @@ fun answerfun(ans: Boolean, num: MutableIntState, result: MutableIntState) {
 @Composable
 fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) {
     val isnext = rememberSaveable{ mutableStateOf(false) }
-    if (num.value >= 6) {
+    if (num.intValue >= questions.size) {
         Text(
-            text = "Реузльтат: ${result.value} / 6",
+            text = "Реузльтат: ${result.intValue} / ${questions.size}",
             modifier = modifier,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp
         )
     }
-    if (num.value < 6) {
+    if (num.intValue < questions.size) {
         Text(
-            text = questions[num.value],
+            text = questions[num.intValue],
             modifier = modifier,
             textAlign = TextAlign.Center,
             fontSize = 20.sp
         )
     }
     Spacer(Modifier.height(20.dp))
-    if (!isnext.value && num.value < 6) {
+    if (!isnext.value && num.intValue < questions.size) {
         Row(
             modifier = modifier,
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -108,7 +106,7 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         if (isnext.value) {
-            Button({ num.value += 1; isnext.value = false }, Modifier.fillMaxWidth(0.5f)) {
+            Button({ num.intValue += 1; isnext.value = false }, Modifier.fillMaxWidth(0.5f)) {
                 Text(text = "Далее")
             }
         }
@@ -117,8 +115,8 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        if (num.value >= 6) {
-            Button({ num.value = 0; isnext.value = false; result.value = 0 }, Modifier.fillMaxWidth(0.5f)) {
+        if (num.intValue >= questions.size) {
+            Button({ num.intValue = 0; isnext.value = false; result.intValue = 0 }, Modifier.fillMaxWidth(0.5f)) {
                 Text(text = "Заново")
             }
         }
