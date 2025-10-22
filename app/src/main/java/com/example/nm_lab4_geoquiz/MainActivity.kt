@@ -40,8 +40,12 @@ class MainActivity : ComponentActivity() {
             val result = rememberSaveable{ mutableIntStateOf(0) }
             NM_lab4_GeoQuizTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(Modifier.padding(innerPadding)) {
-                        AnswerMe(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally), num = num, result = result)
+                    Column(
+                        modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AnswerMe(modifier = Modifier.fillMaxWidth(), num = num, result = result)
                     }
                 }
             }
@@ -68,7 +72,6 @@ fun answerfun(ans: Boolean, num: MutableIntState, result: MutableIntState) {
 @Composable
 fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) {
     val isnext = rememberSaveable{ mutableStateOf(false) }
-    Spacer(Modifier.height(10.dp))
     AnimatedVisibility(visible = num.value >= 6) {
         Text(
             text = "Реузльтат: ${result.value} / 6",
@@ -86,7 +89,7 @@ fun AnswerMe(modifier: Modifier, num: MutableIntState, result: MutableIntState) 
             fontSize = 20.sp
         )
     }
-    Spacer(Modifier.height(10.dp))
+    Spacer(Modifier.height(20.dp))
     AnimatedVisibility(visible = !isnext.value && num.value < 6) {
         Row(
             modifier = modifier,
@@ -129,7 +132,11 @@ fun GreetingPreview() {
     val result = remember{ mutableIntStateOf(0) }
     NM_lab4_GeoQuizTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Column(Modifier.padding(innerPadding)) {
+            Column(
+                modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 AnswerMe(modifier = Modifier.fillMaxWidth(), num = num, result = result)
             }
         }
